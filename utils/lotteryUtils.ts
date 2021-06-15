@@ -57,22 +57,13 @@ export const getSingleLotteryBatch = (index: number): SingleLotteryReturn => {
     lotteryContract.methods.historyNumbers(index, 2).call,
     lotteryContract.methods.historyNumbers(index, 3).call,
   ].map((x) => batch.add(x));
-  if (index >= 349 && index <= 355) {
-    [
-      lotteryContract.methods.historyAmount(index, 0).call,
-      lotteryContract.methods.historyAmount(index, 1).call,
-      lotteryContract.methods.historyAmount(index, 2).call,
-      lotteryContract.methods.historyAmount(index, 3).call,
-      lotteryContract.methods.historyAmount(index, 4).call,
-    ].map((x) => batch2.add(x));
-  } else {
-    [
-      lotteryContract.methods.historyAmount(index, 0).call,
-      lotteryContract.methods.historyAmount(index, 1).call,
-      lotteryContract.methods.historyAmount(index, 2).call,
-      lotteryContract.methods.historyAmount(index, 3).call,
-    ].map((x) => batch2.add(x));
-  }
+
+  [
+    lotteryContract.methods.historyAmount(index, 0).call,
+    lotteryContract.methods.historyAmount(index, 1).call,
+    lotteryContract.methods.historyAmount(index, 2).call,
+    lotteryContract.methods.historyAmount(index, 3).call,
+  ].map((x) => batch2.add(x));
 
   return {
     numbers1: batch.execute() as Promise<[string, string, string, string]>,
@@ -127,10 +118,6 @@ export const getIssueIndex = async (): Promise<number | { error: string; errorMe
 };
 
 export const getTicketPrice = (index: number): number => {
-  if (index <= 4) {
-    return 20;
-  }
-
   return 5;
 };
 
@@ -138,25 +125,13 @@ export const getTicketPrice = (index: number): number => {
  * @param index
  */
 export const getRates = (index: number): Rates => {
-  // if (index >= 0 && index <= 205) {
-  //   return ratesV1;
-  // } else if ((index >= 206 && index <= 348) || index >= 356) {
-  //   return ratesV2;
-  // }
-
-  if (index >= 0) {
-    return ratesV2;
-  }
-
   return ratesV2;
 };
 
 export const getAllLotteries = (issueIndex: number): Promise<Array<Lottery>> => {
   const finalNumbersProm: Array<SingleLotteryReturn> = [];
   for (let i = issueIndex; i >= 0; i--) {
-    if (i !== 349) {
-      finalNumbersProm.push(getSingleLotteryBatch(i));
-    }
+    finalNumbersProm.push(getSingleLotteryBatch(i));
   }
   return computeLotteries(finalNumbersProm);
 };
